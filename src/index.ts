@@ -214,12 +214,12 @@ function buildLocaleOptions (
 }
 
 export function humanBytes (
-    number:number|bigint,
+    num:number|bigint,
     options?:Options
 ):string {
-    if (typeof number !== 'bigint' && !Number.isFinite(number)) {
+    if (typeof num !== 'bigint' && !Number.isFinite(num)) {
         throw new TypeError(
-            `Expected a finite number, got ${typeof number}: ${number}`
+            `Expected a finite number, got ${typeof num}: ${num}`
         )
     }
 
@@ -242,35 +242,38 @@ export function humanBytes (
         ''
 
     // Handle signed zero case
-    const isZero = typeof number === 'number' ? number === 0 : number === 0n
+    const isZero = typeof num === 'number' ? num === 0 : num === 0n
     if (mergedOptions.signed && isZero) {
         const result = ` 0${separator}${UNITS[0]}`
         return applyFixedWidth(result, mergedOptions.fixedWidth)
     }
 
-    const isNegative = number < 0
+    const isNegative = num < 0
     const prefix = isNegative ? '-' : (mergedOptions.signed ? '+' : '')
 
     if (isNegative) {
-        number = -number
+        num = -num
     }
 
     const localeOptions = buildLocaleOptions(mergedOptions)
     let result: string
 
-    if (number < 1) {
+    if (num < 1) {
         const numberString = toLocaleString(
-            number,
+            num,
             mergedOptions.locale,
             localeOptions
         )
         result = prefix + numberString + separator + UNITS[0]
     } else {
         const n = (mergedOptions.binary ?
-            log(number) / Math.log(1024) :
-            log10(number) / 3)
+            log(num) / Math.log(1024) :
+            log10(num) / 3)
         const exponent = Math.min(Math.floor(n), UNITS.length - 1)
-        let dividedNumber: number | string = divide(number, (mergedOptions.binary ? 1024 : 1000) ** exponent)
+        let dividedNumber:number|string = divide(
+            num,
+            (mergedOptions.binary ? 1024 : 1000) ** exponent
+        )
 
         if (!localeOptions) {
             const minPrecision = Math.max(
