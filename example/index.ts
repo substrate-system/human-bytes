@@ -1,8 +1,8 @@
 import { type FunctionComponent, render } from 'preact'
 import { html } from 'htm/preact'
-import { example } from '../src/index.js'
+import prettyBytes from '../src/index.js'
 
-example()
+console.log(prettyBytes(1337))
 
 const Example:FunctionComponent<unknown> = function () {
     return html`<div>hello</div>`
