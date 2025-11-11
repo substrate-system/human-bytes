@@ -28,6 +28,7 @@ File sizes for humans.
 - [Use](#use)
   * [JS](#js)
   * [Pre-built JS](#pre-built-js)
+- [See Also](#see-also)
 
 <!-- tocstop -->
 
