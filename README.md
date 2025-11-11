@@ -313,5 +313,9 @@ cp ./node_modules/@substrate-system/human-bytes/dist/index.min.js ./public/human
 
 ## See Also
 
-The example for this module uses a pretty checkbox,
+[The example page](https://substrate-system.github.io/human-bytes/) for this
+module uses a pretty checkbox,
 [created by following this guide](https://moderncss.dev/pure-css-custom-checkbox-style/).
+
+This is based on [`pretty-bytes`](https://github.com/sindresorhus/pretty-bytes)
+by [sindresorhus](https://github.com/sindresorhus).

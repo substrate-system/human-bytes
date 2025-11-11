@@ -11,6 +11,10 @@
     --result-border: #cbd5e0;
 }
 
+legend {
+    margin-bottom: 1rem;
+}
+
 /*
 -------------------------------
     checkboxes
