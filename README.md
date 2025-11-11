@@ -77,6 +77,10 @@ humanBytes(n:number|bigint, options?:Options):string
 #### Example
 
 ```js
+import { humanBytes } from '@substrate-system/human-bytes'
+
+const result = humanBytes(1337)
+// => '1.34 kB'
 ```
 
 #### Parameters

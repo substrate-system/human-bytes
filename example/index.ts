@@ -1,10 +1,35 @@
 import { type FunctionComponent, render } from 'preact'
 import { html } from 'htm/preact'
-import { signal } from '@preact/signals'
+import { signal, type Signal } from '@preact/signals'
+import '@substrate-system/css-normalize'
 import humanBytes from '../src/index.js'
 
-const state = {
-    input: signal('1234567890')
+const state:{
+    input:Signal<string>;
+    opts:{
+        bits:Signal<boolean>
+        binary:Signal<boolean>
+        signed:Signal<boolean>
+        space:Signal<boolean>
+        nonBreakingSpace:Signal<boolean>
+        locale:Signal<string>
+        minimumFractionDigits:Signal<string>
+        maximumFractionDigits:Signal<string>
+        fixedWidth:Signal<string>
+    }
+} = {
+    input: signal('1234567890'),
+    opts: {
+        bits: signal<boolean>(false),
+        binary: signal<boolean>(false),
+        signed: signal<boolean>(false),
+        space: signal<boolean>(true),
+        nonBreakingSpace: signal<boolean>(false),
+        locale: signal<string>(''),
+        minimumFractionDigits: signal<string>(''),
+        maximumFractionDigits: signal<string>(''),
+        fixedWidth: signal<string>('')
+    }
 }
 
 function handleInput (ev:Event) {
@@ -12,16 +37,60 @@ function handleInput (ev:Event) {
     state.input.value = target.value
 }
 
+function handleCheckbox (key:keyof typeof state.opts) {
+    return (ev:Event) => {
+        const target = ev.target as HTMLInputElement
+        ;(state.opts[key] as Signal<boolean>).value = target.checked
+    }
+}
+
+function handleTextInput (key:keyof typeof state.opts) {
+    return (ev:Event) => {
+        const target = ev.target as HTMLInputElement
+        ;(state.opts[key] as Signal<string>).value = target.value
+    }
+}
+
 const Example:FunctionComponent = function () {
     const inputValue = state.input.value
     let result = ''
     let error = ''
 
+    // Build options object from state
+    const options:Record<string, any> = {}
+
+    if (state.opts.bits.value) options.bits = true
+    if (state.opts.binary.value) options.binary = true
+    if (state.opts.signed.value) options.signed = true
+    if (!state.opts.space.value) options.space = false
+    if (state.opts.nonBreakingSpace.value) options.nonBreakingSpace = true
+
+    if (state.opts.locale.value) {
+        const localeVal = state.opts.locale.value
+        if (localeVal === 'true') {
+            options.locale = true
+        } else if (localeVal.includes(',')) {
+            options.locale = localeVal.split(',').map(s => s.trim())
+        } else {
+            options.locale = localeVal
+        }
+    }
+
+    if (state.opts.minimumFractionDigits.value) {
+        options.minimumFractionDigits = parseInt(state.opts.minimumFractionDigits.value)
+    }
+    if (state.opts.maximumFractionDigits.value) {
+        options.maximumFractionDigits = parseInt(state.opts.maximumFractionDigits.value)
+    }
+    if (state.opts.fixedWidth.value) {
+        options.fixedWidth = parseInt(state.opts.fixedWidth.value)
+    }
+
     try {
         const num = inputValue.includes('.') ?
             parseFloat(inputValue) :
             BigInt(inputValue)
-        result = humanBytes(num)
+        result = humanBytes(num, options)
     } catch (err) {
         error = err instanceof Error ? err.message : String(err)
     }
@@ -35,28 +104,136 @@ const Example:FunctionComponent = function () {
         </p>
 
         <div class="converter">
-            <label>
-                <div class="label-text">Bytes:</div>
-                <input
-                    type="text"
-                    name="input"
-                    id="input"
-                    value=${inputValue}
-                    onInput=${handleInput}
-                    placeholder="Enter a number"
-                />
-            </label>
+            <div class="input-output">
+                <label>
+                    <div class="label-text">Bytes:</div>
+                    <input
+                        type="text"
+                        name="input"
+                        id="input"
+                        value=${inputValue}
+                        onInput=${handleInput}
+                        placeholder="Enter a number"
+                    />
+                </label>
 
-            ${error ? html`
-                <div class="error">
-                    <strong>Error:</strong> ${error}
-                </div>
-            ` : html`
-                <div class="result">
-                    <div class="result-label">Human readable:</div>
-                    <div class="result-value">${result}</div>
-                </div>
-            `}
+                ${error ? html`
+                    <div class="error">
+                        <strong>Error:</strong> ${error}
+                    </div>
+                ` : html`
+                    <div class="result">
+                        <div class="result-label">Human readable:</div>
+                        <div class="result-value">${result}</div>
+                    </div>
+                `}
+            </div>
+
+            <fieldset class="options">
+                <legend>Options</legend>
+
+                <label class="checkbox-label">
+                    <input
+                        type="checkbox"
+                        name="bits"
+                        checked=${state.opts.bits.value}
+                        onChange=${handleCheckbox('bits')}
+                    />
+                    <span>bits - Format as bits instead of bytes</span>
+                </label>
+
+                <label class="checkbox-label">
+                    <input
+                        type="checkbox"
+                        name="binary"
+                        checked=${state.opts.binary.value}
+                        onChange=${handleCheckbox('binary')}
+                    />
+                    <span>binary - Use binary prefix (base 1024)</span>
+                </label>
+
+                <label class="checkbox-label">
+                    <input
+                        type="checkbox"
+                        name="signed"
+                        checked=${state.opts.signed.value}
+                        onChange=${handleCheckbox('signed')}
+                    />
+                    <span>signed - Include + sign for positive numbers</span>
+                </label>
+
+                <label class="checkbox-label">
+                    <input
+                        type="checkbox"
+                        name="space"
+                        checked=${state.opts.space.value}
+                        onChange=${handleCheckbox('space')}
+                    />
+                    <span>space - Add space between number and unit</span>
+                </label>
+
+                <label class="checkbox-label">
+                    <input
+                        type="checkbox"
+                        name="non-breaking"
+                        checked=${state.opts.nonBreakingSpace.value}
+                        onChange=${handleCheckbox('nonBreakingSpace')}
+                    />
+                    <span>nonBreakingSpace - Use non-breaking space</span>
+                </label>
+
+                <label>
+                    <div class="label-text">locale (string, array, or "true"):</div>
+                    <input
+                        type="text"
+                        name="locale"
+                        value=${state.opts.locale.value}
+                        onInput=${handleTextInput('locale')}
+                        placeholder="e.g., 'de' or 'en,de' or 'true'"
+                    />
+                </label>
+
+                <label>
+                    <div class="label-text">minimumFractionDigits:</div>
+                    <input
+                        name="min"
+                        type="number"
+                        min="0"
+                        value=${state.opts.minimumFractionDigits.value}
+                        onInput=${handleTextInput('minimumFractionDigits')}
+                        placeholder="e.g., 2"
+                    />
+                </label>
+
+                <label>
+                    <div class="label-text">maximumFractionDigits:</div>
+                    <input
+                        name="max"
+                        type="number"
+                        min="0"
+                        value=${state.opts.maximumFractionDigits.value}
+                        onInput=${handleTextInput('maximumFractionDigits')}
+                        placeholder="e.g., 2"
+                    />
+                </label>
+
+                <label>
+                    <div class="label-text">fixedWidth</div>
+                    <p id="fw-description">
+                        (The string will be padded with spaces on the
+                        left if needed.)
+                    </p>
+                    <input
+                        name="fixed-width"
+                        aria-describedby="fw-description"
+                        type="number"
+                        min="0"
+                        value=${state.opts.fixedWidth.value}
+                        onInput=${handleTextInput('fixedWidth')}
+                        placeholder="e.g., 10"
+                    />
+                </label>
+            </fieldset>
         </div>
     </div>`
 }
