@@ -3,6 +3,7 @@ import prettyBytes from '../src/index.js'
 
 test('pretty bytes', async t => {
     const result = prettyBytes(1337)
+    console.log(`1337 => ${result}`)
     t.equal(result, '1.34 kB', 'should format bytes correctly')
 })
 
