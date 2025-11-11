@@ -14,7 +14,19 @@ File sizes for humans.
 [See a live demo](https://namespace.github.io/package-name/)
 
 <details><summary><h2>Contents</h2></summary>
+
 <!-- toc -->
+
+- [Install](#install)
+- [API](#api)
+  * [ESM](#esm)
+  * [Common JS](#common-js)
+- [Use](#use)
+  * [JS](#js)
+  * [Pre-built JS](#pre-built-js)
+
+<!-- tocstop -->
+
 </details>
 
 ## Install
