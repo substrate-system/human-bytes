@@ -309,3 +309,8 @@ cp ./node_modules/@substrate-system/human-bytes/dist/index.min.js ./public/human
 ```html
 <script type="module" src="./human-bytes.min.js"></script>
 ```
+
+## See Also
+
+The example for this module uses a pretty checkbox,
+[created by following this guide](https://moderncss.dev/pure-css-custom-checkbox-style/).
