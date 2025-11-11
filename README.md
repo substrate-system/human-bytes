@@ -35,6 +35,19 @@ File sizes for humans.
 npm i -S @substrate-system/human-bytes
 ```
 
+-------
+
+## Example
+
+```js
+import { humanBytes } from '@substrate-system/human-bytes'
+
+const readble = humanBytes(1337)
+// => 1.34 kB
+```
+
+-------
+
 ## API
 
 This exposes ESM and common JS via [package.json `exports` field](https://nodejs.org/api/packages.html#exports).
