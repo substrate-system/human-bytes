@@ -1,6 +1,6 @@
 {
   "name": "@substrate-system/human-bytes",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "Human-readable sizes for files and things",
   "type": "module",
   "files": [
