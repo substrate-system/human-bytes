@@ -20,7 +20,7 @@ File sizes for humans.
 ## Install
 
 ```sh
-npm i -S @substrate-system/human-size
+npm i -S @substrate-system/human-bytes
 ```
 
 ## API
@@ -29,19 +29,19 @@ This exposes ESM and common JS via [package.json `exports` field](https://nodejs
 
 ### ESM
 ```js
-import '@substrate-system/human-size'
+import '@substrate-system/human-bytes'
 ```
 
 ### Common JS
 ```js
-require('@substrate-system/human-size')
+require('@substrate-system/human-bytes')
 ```
 
 ## Use
 
 ### JS
 ```js
-import '@substrate-system/human-size'
+import '@substrate-system/human-bytes'
 ```
 
 ### Pre-built JS
@@ -52,11 +52,11 @@ accessible to your web server, then link to them in HTML.
 #### copy
 
 ```sh
-cp ./node_modules/@substrate-system/human-size/dist/index.min.js ./public/human-size.min.js
+cp ./node_modules/@substrate-system/human-bytes/dist/index.min.js ./public/human-bytes.min.js
 ```
 
 #### HTML
 
 ```html
-<script type="module" src="./human-size.min.js"></script>
+<script type="module" src="./human-bytes.min.js"></script>
 ```
