@@ -1,8 +1,11 @@
 import { type FunctionComponent, render } from 'preact'
 import { html } from 'htm/preact'
-import { signal, type Signal } from '@preact/signals'
+import { signal, useSignal, type Signal } from '@preact/signals'
 import '@substrate-system/css-normalize'
-import humanBytes from '../src/index.js'
+import { type Options, humanBytes } from '../src/index.js'
+import Debug from '@substrate-system/debug'
+
+const debug = Debug(import.meta.env.DEV)
 
 const state:{
     input:Signal<string>;
@@ -53,44 +56,54 @@ function handleTextInput (key:keyof typeof state.opts) {
 
 const Example:FunctionComponent = function () {
     const inputValue = state.input.value
-    let result = ''
     let error = ''
 
-    // Build options object from state
-    const options:Record<string, any> = {}
+    const result = useSignal<null|string>(null)
 
-    if (state.opts.bits.value) options.bits = true
-    if (state.opts.binary.value) options.binary = true
-    if (state.opts.signed.value) options.signed = true
-    if (!state.opts.space.value) options.space = false
-    if (state.opts.nonBreakingSpace.value) options.nonBreakingSpace = true
+    debug('rendering...', result.value)
+
+    // Build options object from state
+    const opts:Options = ([
+        'bits',
+        'binary',
+        'signed',
+        'space',
+        'nonBreakingSpace',
+    ]).reduce((acc, k) => {
+        acc[k] = state.opts[k].value
+        return acc
+    }, {})
 
     if (state.opts.locale.value) {
         const localeVal = state.opts.locale.value
         if (localeVal === 'true') {
-            options.locale = true
+            opts.locale = true
         } else if (localeVal.includes(',')) {
-            options.locale = localeVal.split(',').map(s => s.trim())
+            opts.locale = localeVal.split(',').map(s => s.trim())
         } else {
-            options.locale = localeVal
+            opts.locale = localeVal
         }
     }
 
     if (state.opts.minimumFractionDigits.value) {
-        options.minimumFractionDigits = parseInt(state.opts.minimumFractionDigits.value)
+        opts.minimumFractionDigits = parseInt(
+            state.opts.minimumFractionDigits.value
+        )
     }
     if (state.opts.maximumFractionDigits.value) {
-        options.maximumFractionDigits = parseInt(state.opts.maximumFractionDigits.value)
+        opts.maximumFractionDigits = parseInt(
+            state.opts.maximumFractionDigits.value
+        )
     }
     if (state.opts.fixedWidth.value) {
-        options.fixedWidth = parseInt(state.opts.fixedWidth.value)
+        opts.fixedWidth = parseInt(state.opts.fixedWidth.value)
     }
 
     try {
         const num = inputValue.includes('.') ?
             parseFloat(inputValue) :
             BigInt(inputValue)
-        result = humanBytes(num, options)
+        result.value = humanBytes(num, opts)
     } catch (err) {
         error = err instanceof Error ? err.message : String(err)
     }
@@ -124,7 +137,7 @@ const Example:FunctionComponent = function () {
                 ` : html`
                     <div class="result">
                         <div class="result-label">Human readable:</div>
-                        <div class="result-value">${result}</div>
+                        <div class="result-value">${result.value}</div>
                     </div>
                 `}
             </div>
