@@ -141,7 +141,6 @@ body {
 h1 {
     margin-bottom: 1rem;
     border-bottom: 2px solid;
-    color: #1a202c;
 
     &:first-child {
         margin-top: 0;
@@ -181,7 +180,6 @@ li {
 }
 
 .description {
-    color: #4a5568;
     margin-bottom: 2rem;
 }
 
@@ -193,7 +191,6 @@ label {
 .label-text {
     margin-bottom: 0.5rem;
     font-weight: 600;
-    color: #2d3748;
 }
 
 input {
@@ -230,7 +227,6 @@ input {
 .result-value {
     font-size: 1.5rem;
     font-weight: 600;
-    color: #2d3748;
     font-family: 'Courier New', Courier, monospace;
 }
 
